@@ -159,6 +159,7 @@ pub struct TestFlags {
   pub no_run: bool,
   pub fail_fast: Option<NonZeroUsize>,
   pub allow_none: bool,
+  pub update: bool,
   pub include: Option<Vec<String>>,
   pub filter: Option<String>,
   pub shuffle: Option<u64>,
@@ -1376,6 +1377,14 @@ fn test_subcommand<'a>() -> App<'a> {
         .value_hint(ValueHint::AnyPath),
     )
     .arg(
+      Arg::new("update")
+        .long("update")
+        .short('u')
+        .help("Enable snapshot update mode")
+        .takes_value(false)
+        .required(false),
+    )
+    .arg(
       Arg::new("no-run")
         .long("no-run")
         .help("Cache test modules, but don't run tests")
@@ -2395,6 +2404,7 @@ fn test_parse(flags: &mut Flags, matches: &clap::ArgMatches) {
     None => vec![],
   };
 
+  let update = matches.is_present("update");
   let no_run = matches.is_present("no-run");
   let trace_ops = matches.is_present("trace-ops");
   let doc = matches.is_present("doc");
@@ -2465,6 +2475,7 @@ fn test_parse(flags: &mut Flags, matches: &clap::ArgMatches) {
     fail_fast,
     include,
     ignore,
+    update,
     filter,
     shuffle,
     allow_none,
@@ -4626,7 +4637,7 @@ mod tests {
   #[test]
   fn test_with_flags() {
     #[rustfmt::skip]
-    let r = flags_from_vec(svec!["deno", "test", "--unstable", "--trace-ops", "--no-run", "--filter", "- foo", "--coverage=cov", "--location", "https:foo", "--allow-net", "--allow-none", "dir1/", "dir2/", "--", "arg1", "arg2"]);
+    let r = flags_from_vec(svec!["deno", "test", "--unstable", "--trace-ops", "--no-run", "--update", "--filter", "- foo", "--coverage=cov", "--location", "https:foo", "--allow-net", "--allow-none", "dir1/", "dir2/", "--", "arg1", "arg2"]);
     assert_eq!(
       r.unwrap(),
       Flags {
@@ -4638,6 +4649,7 @@ mod tests {
           allow_none: true,
           include: Some(svec!["dir1/", "dir2/"]),
           ignore: vec![],
+          update: true,
           shuffle: None,
           concurrent_jobs: NonZeroUsize::new(1).unwrap(),
           trace_ops: true,
@@ -4706,6 +4718,7 @@ mod tests {
           fail_fast: None,
           filter: None,
           allow_none: false,
+          update: false,
           shuffle: None,
           include: None,
           ignore: vec![],
@@ -4735,6 +4748,7 @@ mod tests {
           allow_none: false,
           shuffle: None,
           include: None,
+          update: false,
           ignore: vec![],
           concurrent_jobs: NonZeroUsize::new(1).unwrap(),
           trace_ops: false,
@@ -4766,6 +4780,7 @@ mod tests {
           allow_none: false,
           shuffle: None,
           include: None,
+          update: false,
           ignore: vec![],
           concurrent_jobs: NonZeroUsize::new(1).unwrap(),
           trace_ops: false,
@@ -4791,6 +4806,7 @@ mod tests {
           allow_none: false,
           shuffle: Some(1),
           include: None,
+          update: false,
           ignore: vec![],
           concurrent_jobs: NonZeroUsize::new(1).unwrap(),
           trace_ops: false,
@@ -4816,6 +4832,7 @@ mod tests {
           allow_none: false,
           shuffle: None,
           include: None,
+          update: false,
           ignore: vec![],
           concurrent_jobs: NonZeroUsize::new(1).unwrap(),
           trace_ops: false,
@@ -4842,6 +4859,7 @@ mod tests {
           allow_none: false,
           shuffle: None,
           include: None,
+          update: false,
           ignore: vec![],
           concurrent_jobs: NonZeroUsize::new(1).unwrap(),
           trace_ops: false,
