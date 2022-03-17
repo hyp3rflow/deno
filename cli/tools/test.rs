@@ -159,6 +159,7 @@ struct TestSpecifierOptions {
   fail_fast: Option<NonZeroUsize>,
   filter: Option<String>,
   shuffle: Option<u64>,
+  update: bool,
   trace_ops: bool,
 }
 
@@ -515,6 +516,7 @@ async fn test_specifier(
       json!({
         "filter": options.filter,
         "shuffle": options.shuffle,
+        "update": options.update,
       }),
     ),
   )?;
@@ -1049,6 +1051,7 @@ pub async fn run_tests(
       concurrent_jobs: test_flags.concurrent_jobs,
       fail_fast: test_flags.fail_fast,
       filter: test_flags.filter,
+      update: test_flags.update,
       shuffle: test_flags.shuffle,
       trace_ops: test_flags.trace_ops,
     },
@@ -1285,6 +1288,7 @@ pub async fn run_tests_with_watch(
           fail_fast: test_flags.fail_fast,
           filter: filter.clone(),
           shuffle: test_flags.shuffle,
+          update: test_flags.update,
           trace_ops: test_flags.trace_ops,
         },
       )

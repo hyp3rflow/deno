@@ -304,6 +304,9 @@ declare namespace Deno {
     /** Ensure the test case does not prematurely cause the process to exit,
      * for example via a call to `Deno.exit`. Defaults to true. */
     sanitizeExit?: boolean;
+    /** Enable snapshot update mode
+     * Defaults to false */
+    update?: boolean;
 
     /** Specifies the permissions that should be used to run the test.
      * Set this to "inherit" to keep the calling thread's permissions.
